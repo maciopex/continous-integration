@@ -1,0 +1,132 @@
+Nagios Installation
+-------------------
+
+1. sudo yum install gcc glibc glibc-common gd gd-devel make net-snmp openssl-devel xinetd unzip
+
+
+ useradd nagios
+sudo groupadd nagcmd
+sudo usermod -a -G nagcmd nagios
+
+mkdir nagios
+cd nagios
+
+curl -L -O https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.1.1.tar.gz
+tar xvf nagios-*.tar.gz
+cd nagios-*
+
+./configure --with-command-group=nagcmd 
+
+make all ---- compile
+
+
+
+
+sudo make install
+sudo make install-commandmode
+sudo make install-init
+sudo make install-config
+sudo make install-webconf
+
+
+
+
+sudo usermod -G nagcmd apache ---> to issue external commands via web interface
+
+
+
+Install Nagios Plugins
+----------------------
+cd nagios
+curl -L -O http://nagios-plugins.org/download/nagios-plugins-2.1.1.tar.gz
+tar xvf nagios-plugins-*.tar.gz
+cd nagios-plugins-*
+
+
+./configure --with-nagios-user=nagios --with-nagios-group=nagios --with-openssl
+
+
+make
+make install
+
+Install NRPE
+------------
+
+cd nagios
+curl -L -O http://downloads.sourceforge.net/project/nagios/nrpe-2.x/nrpe-2.15/nrpe-2.15.tar.gz
+
+tar xvf nrpe-*.tar.gz
+
+cd nrpe-*
+./configure --enable-command-args --with-nagios-user=nagios --with-nagios-group=nagios --with-ssl=/usr/bin/openssl --with-ssl-lib=/usr/lib/x86_64-linux-gnu
+
+make all
+sudo make install
+sudo make install-xinetd
+sudo make install-daemon-config
+
+
+Configure Nagios
+
+sudo vi /usr/local/nagios/etc/nagios.cfg
+
+#cfg_dir=/usr/local/nagios/etc/servers ---> find this line and uncomment it
+
+sudo mkdir /usr/local/nagios/etc/servers
+
+
+
+sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+
+
+systemctl daemon-reload
+sudo systemctl start nagios.service
+sudo systemctl restart httpd.service
+
+
+
+Accessing the Nagios Web Interface
+-----------------------------------
+
+http://nagios_server_public_ip/nagios
+
+
+
+
+Monitor a CentOS 7 Host with NRPE
+----------------------------------
+
+
+
+
+
+
+yum install epel-release
+yum install nrpe nagios-plugins-all
+
+ vi /etc/nagios/nrpe.cfg
+ 
+ Find the allowed_hosts directive, and add the private IP address of your Nagios server to the comma-delimited list (substitute it in place of the highlighted example):
+
+allowed_hosts=127.0.0.1,10.132.224.168
+
+
+ystemctl start nrpe.service
+sudo systemctl enable nrpe.service
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
