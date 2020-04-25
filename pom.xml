@@ -6,7 +6,7 @@
 
   <groupId>org.vinitha</groupId>
   <artifactId>arjun-webapp</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>war</packaging>
 
   <name>arjun-webapp Maven Webapp</name>
